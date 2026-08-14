@@ -1,5 +1,10 @@
-torch>=2.0.0
-torchvision>=0.15.0
-Pillow
-tqdm
+torch
+torchvision
 numpy
+Pillow
+onnx
+onnxruntime
+pytorch-msssim
+torchmetrics
+lpips
+tqdm
