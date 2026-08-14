@@ -6,11 +6,11 @@ This repository contains an end-to-end, hardware-software co-designed deep learn
 
 ## ⚡ Advanced Edge Optimization & Hardware-Software Co-Design
 
-1. **Multi-Objective FFT Loss Optimization:** Bypasses the traditional "blurry average" trap of spatial losses by penalizing high-frequency spectrum errors using a 2D Fast Fourier Transform ($L_{FFT}$), locking in sharp semiconductor grid geometries.
+1. **Multi-Objective FFT Loss Optimization:** Bypasses the traditional "blurry average" trap of spatial losses by penalizing high-frequency spectrum errors using a 2D Fast Fourier Transform (L_FFT), locking in sharp semiconductor grid geometries.
 2. **INT8 Post-Training Quantization (PTQ):** Compresses the raw FP32 NAFNet PyTorch model into an ultra-low-footprint 8-bit integer ONNX graph (`nafnet_int8_quantized.onnx`) tailored for edge deployment.
 3. **AXI4-Stream SimpleGate RTL Coprocessor:** A custom Verilog implementation of NAFNet's non-linear core activation (`simple_gate.v`), utilizing industry-standard AXI4-Stream bus protocols with a fully verified self-checking testbench (`tb_simple_gate.v`).
 4. **SRAM-Constrained Tiled Inference (`tiled_inference.py`):** Implements a sliding-window overlap algorithm ($64 \times 64$ patches) with dynamic scale detection, overcoming off-chip memory bandwidth limitations and L1/L2 cache ceilings on edge chips.
-5. **Physics-Informed Noise Modeling (`sem_noise_model.py`):** Replaces artificial Gaussian noise with a Poisson-Gaussian mixture distribution ($Y \sim \mathcal{P}(\lambda X) / \lambda + \mathcal{N}(0, \sigma^2)$) to simulate true electron/photon shot noise inherent to Scanning Electron Microscopes (SEM).
+5. **Physics-Informed Noise Modeling (`sem_noise_model.py`):** Replaces artificial Gaussian noise with a Poisson-Gaussian mixture distribution (Y ~ Poisson(λX)/λ + Gaussian(0, σ²)) to simulate true electron/photon shot noise inherent to Scanning Electron Microscopes (SEM).
 
 ## 🛠️ Production Roadmap & Hardware Constraints (Architectural Notes)
 *To address production tape-out readiness, the current rapid-prototyping architecture acknowledges the following physical realities for future ASIC iteration:*
