@@ -1,8 +1,13 @@
-# Hardware Acceleration: SSIM Coprocessor
+# 🎛️ Hardware Acceleration & RTL IP Block
 
-To make this image restoration pipeline viable for real-time edge deployment (e.g., inline semiconductor inspection), we must optimize the computational bottlenecks. 
+This directory contains the Verilog hardware descriptions for the edge-accelerated NAFNet coprocessor pipeline.
 
-Evaluating the Structural Similarity Index Measure (SSIM) across thousands of sliding image windows is highly taxing on a standard CPU/GPU due to the localized variance and covariance formulas. 
+## 📂 File Manifest
+* **`simple_gate.v`**: AXI4-Stream compliant hardware implementation of the NAFNet `SimpleGate` activation function. Replaces expensive software exponentiations with single-cycle parallel integer multiplication.
+* **`tb_simple_gate.v`**: Self-checking functional testbench validating dual-stream INT8 vector inputs against clock cycles, backpressure states, and assertions using Icarus Verilog (`iverilog`).
 
-### Pipelined Difference & Squaring Unit (`ssim_diff_squarer.v`)
-This Verilog RTL module demonstrates a hardware-software co-design approach. By offloading the (x - y)^2 operations to a dedicated 2-stage pipelined DSP block on an FPGA, we can process pixel streams at high clock frequencies with a throughput of one squared difference per clock cycle, drastically reducing the SSIM evaluation latency.
+## 🚀 Simulation & Verification
+To run the self-checking hardware testbench locally via CLI:
+```bash
+iverilog -o sim tb_simple_gate.v simple_gate.v
+vvp sim
