@@ -1,6 +1,5 @@
 # 🔬 SEMICON India 2026: Edge-Ready Semiconductor Image Restoration
 
-![Final Edge-Optimized Output]()
 
 This repository contains an end-to-end, hardware-software co-designed deep learning pipeline for restoring noisy semiconductor chip array images. Developed for the **SEMICON India Hackathon 2026**, this solution recovers microscopic geometric structures from degraded sensor data, performs 2x Super-Resolution, and is aggressively optimized for real-time edge ASIC/FPGA deployment.
 
