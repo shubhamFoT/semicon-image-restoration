@@ -1,0 +1,6 @@
+data/
+demo_output/
+*.zip
+__pycache__/
+venv/
+*.pth

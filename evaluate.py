@@ -5,19 +5,15 @@ import numpy as np
 from PIL import Image
 from torchvision.transforms import ToTensor
 from model import NAFNetMVP
-from tiled_inference import compute_tiled_inference
 
 def load_image(file_path):
-    """Handles both .npy and standard image formats."""
     if file_path.endswith('.npy'):
         arr = np.load(file_path)
         tensor = torch.from_numpy(arr).float()
     else:
-        # Load standard images, convert to grayscale, and to tensor
         img = Image.open(file_path).convert('L')
         tensor = ToTensor()(img)
     
-    # Ensure shape is [Batch, Channel, Height, Width]
     if tensor.ndim == 2:
         tensor = tensor.unsqueeze(0).unsqueeze(0)
     elif tensor.ndim == 3:
@@ -38,7 +34,6 @@ def main():
 
     os.makedirs(args.output_dir, exist_ok=True)
 
-    # ACCEPTS ALL KLA IMAGE FORMATS
     valid_exts = ('.npy', '.png', '.jpg', '.jpeg', '.tif', '.tiff')
     input_files = [f for f in os.listdir(args.input_dir) if f.lower().endswith(valid_exts)]
     
@@ -53,16 +48,13 @@ def main():
             file_path = os.path.join(args.input_dir, filename)
             noisy_tensor = load_image(file_path).to(device)
 
-            # Process
-            restored_tensor = compute_tiled_inference(model, noisy_tensor)
+            restored_tensor = model(noisy_tensor)
+            restored_tensor = torch.clamp(restored_tensor, 0.0, 1.0)
             
-            # Save out as standard PNG for KLA evaluation
             restored_arr = restored_tensor.squeeze().cpu().numpy()
             restored_arr = np.clip(restored_arr * 255.0, 0, 255).astype(np.uint8)
             save_path = os.path.join(args.output_dir, os.path.splitext(filename)[0] + '.png')
             Image.fromarray(restored_arr).save(save_path)
-
-            print(f"Restored and saved: {save_path}")
 
 if __name__ == '__main__':
     main()

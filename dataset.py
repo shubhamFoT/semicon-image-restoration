@@ -1,50 +1,36 @@
 import os
-import torch
-import random
 import numpy as np
+import torch
 from torch.utils.data import Dataset
 
-class ImageRestorationDataset(Dataset):
+class SemiconductorDataset(Dataset):
     def __init__(self, noisy_dir, gt_dir):
+        super().__init__()
         self.noisy_dir = noisy_dir
         self.gt_dir = gt_dir
-        self.image_filenames = sorted([f for f in os.listdir(noisy_dir) if f.endswith('.npy')])
+        
+        all_files = sorted([f for f in os.listdir(noisy_dir) if f.endswith('.npy')])
+        
+        self.valid_files = [f for f in all_files if os.path.exists(os.path.join(gt_dir, f))]
+        
+        if len(self.valid_files) == 0:
+            raise FileNotFoundError(f"No paired .npy files found in {noisy_dir} and {gt_dir}")
 
     def __len__(self):
-        return len(self.image_filenames)
+        return len(self.valid_files)
 
     def __getitem__(self, idx):
-        img_name = self.image_filenames[idx]
+        filename = self.valid_files[idx]
         
-        noisy_path = os.path.join(self.noisy_dir, img_name)
-        gt_path = os.path.join(self.gt_dir, img_name)
-        
-        noisy_arr = np.load(noisy_path)
-        gt_arr = np.load(gt_path)
-        
-        noisy_tensor = torch.from_numpy(noisy_arr).float()
-        gt_tensor = torch.from_numpy(gt_arr).float()
-        
-        if noisy_tensor.ndim == 2:
-            noisy_tensor = noisy_tensor.unsqueeze(0)
-        if gt_tensor.ndim == 2:
-            gt_tensor = gt_tensor.unsqueeze(0)
-            
-        # --- DATA AUGMENTATION ---
-        # 1. Random Horizontal Flip (50% chance)
-        if random.random() > 0.5:
-            noisy_tensor = torch.flip(noisy_tensor, dims=[2])
-            gt_tensor = torch.flip(gt_tensor, dims=[2])
-            
-        # 2. Random Vertical Flip (50% chance)
-        if random.random() > 0.5:
-            noisy_tensor = torch.flip(noisy_tensor, dims=[1])
-            gt_tensor = torch.flip(gt_tensor, dims=[1])
-            
-        # 3. Random 90-degree Rotations (0, 90, 180, or 270 degrees)
-        k = random.randint(0, 3)
-        if k > 0:
-            noisy_tensor = torch.rot90(noisy_tensor, k, dims=[1, 2])
-            gt_tensor = torch.rot90(gt_tensor, k, dims=[1, 2])
-            
+        noisy_arr = np.load(os.path.join(self.noisy_dir, filename)).astype(np.float32)
+        gt_arr = np.load(os.path.join(self.gt_dir, filename)).astype(np.float32)
+
+        if noisy_arr.ndim == 2:
+            noisy_arr = np.expand_dims(noisy_arr, axis=0)
+        if gt_arr.ndim == 2:
+            gt_arr = np.expand_dims(gt_arr, axis=0)
+
+        noisy_tensor = torch.from_numpy(noisy_arr)
+        gt_tensor = torch.from_numpy(gt_arr)
+
         return noisy_tensor, gt_tensor

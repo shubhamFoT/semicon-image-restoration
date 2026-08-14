@@ -34,3 +34,13 @@ This repository contains an end-to-end, hardware-software co-designed deep learn
 ├── nafnet_int8_quantized.onnx    # Compressed, edge-ready hardware graph
 ├── requirements.txt              # Python dependencies
 └── README.md                     # Project documentation
+
+## 🚀 Quick Start & Reproduction
+
+### 1. Environment Setup
+```bash
+git clone [https://github.com/shubhamFOT/semicon-image-restoration.git](https://github.com/shubhamFOT/semicon-image-restoration.git)
+cd semicon-image-restoration
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
